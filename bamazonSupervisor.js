@@ -31,13 +31,15 @@ inquirer.prompt({
 })
 
 var viewSales = function () {
-    connection.query("SELECT * FROM departments", function (err, res) {
+    connection.query("SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) AS product_sales, product_sales-over_head_costs AS totalprofit FROM departments INNER JOIN products ON products.department_name = departments.department_name GROUP BY departments.department_id, departments.department_name, departments.over_head_costs;", function (err, res) {
         if (err) throw err;
         var t = new table
         for (j = 0; j < res.length; j++) {
-            t.cell("department_id", res[j].department_id)
-            t.cell("department_name", res[j].department_name)
-            t.cell("over_head_costs", res[j].over_head_costs)
+            t.cell("department_id", res[j].department_id);
+            t.cell("department_name", res[j].department_name);
+            t.cell("over_head_costs", res[j].over_head_costs);
+            t.cell("product_sales", res[j].product_sales);
+            t.cell("total_profit", res[j].totalprofit)
             t.newRow()
         }
         console.log(t.toString());
